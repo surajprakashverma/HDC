@@ -1,7 +1,5 @@
-import pandas as pd
 import numpy as np
 import pickle
-import matplotlib as plt
 from PIL import Image
 from flask import Flask, render_template, request, redirect, url_for, session
 
