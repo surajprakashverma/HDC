@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Handwritten Digit Recognition</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    min-height:80vh;
+
+    background:linear-gradient(
+    -45deg,
+    #020617,
+    #172554,
+    #312e81,
+    #1e3a8a,
+    #0f172a);
+
+    background-size:400% 400%;
+
+    animation:bgAnimation 18s ease infinite;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:25px;
+
+    overflow-x:hidden;
+
+    position:relative;
+
+}
+
+@keyframes bgAnimation{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+body::before{
+
+content:"";
+
+position:absolute;
+
+width:450px;
+
+height:450px;
+
+border-radius:50%;
+
+background:rgba(56,189,248,.25);
+
+filter:blur(70px);
+
+top:-100px;
+
+left:-100px;
+
+animation:floatBlue 8s ease-in-out infinite;
+
+}
+
+body::after{
+
+content:"";
+
+position:absolute;
+
+width:420px;
+
+height:420px;
+
+border-radius:50%;
+
+background:rgba(168,85,247,.25);
+
+filter:blur(70px);
+
+right:-100px;
+
+bottom:-120px;
+
+animation:floatPurple 10s ease-in-out infinite;
+
+}
+
+@keyframes floatBlue{
+
+0%,100%{
+
+transform:translate(0,0);
+
+}
+
+50%{
+
+transform:translate(40px,30px);
+
+}
+
+}
+
+@keyframes floatPurple{
+
+0%,100%{
+
+transform:translate(0,0);
+
+}
+
+50%{
+
+transform:translate(-40px,-25px);
+
+}
+
+}
+
+.container{
+
+width:100%;
+
+max-width:1250px;
+
+position:relative;
+
+z-index:10;
+
+}
+
+.main-card{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    align-items:center;
+}
+
+.left-panel{
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+.right-panel{
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+.left-panel:hover,
+.right-panel:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 35px 80px rgba(0,0,0,.45);
+
+}
+
+.left-panel{
+
+padding:40px;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+}
+
+.right-panel{
+
+padding:30px;
+
+}
+
+.badge{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:8px;
+
+padding:8px 18px;
+
+border-radius:999px;
+
+background:rgba(56,189,248,.15);
+
+border:1px solid rgba(56,189,248,.4);
+
+color:#bae6fd;
+
+font-size:13px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+width:max-content;
+
+}
+
+.title{
+    font-size:44px;
+    line-height:1.1;
+    font-weight:900;
+    color:white;
+    margin-bottom:15px;
+}
+
+
+.title span{
+
+background:linear-gradient(
+90deg,
+#38bdf8,
+#818cf8,
+#c084fc,
+#facc15);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+.subtitle{
+    color:#dbeafe;
+    font-size:14px;
+    line-height:1.8;
+    margin-bottom:22px;
+}
+.stats{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:18px;
+
+margin-bottom:35px;
+
+}
+
+.stat-card{
+
+background:rgba(15,23,42,.45);
+
+border:1px solid rgba(255,255,255,.08);
+
+padding:20px;
+
+border-radius:18px;
+
+transition:.35s;
+
+}
+
+.stat-card:hover{
+
+transform:translateY(-6px);
+
+background:rgba(15,23,42,.65);
+
+}
+
+.stat-number{
+
+font-size:28px;
+
+font-weight:800;
+
+color:#38bdf8;
+
+margin-bottom:5px;
+
+}
+
+.stat-title{
+
+color:white;
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:5px;
+
+}
+
+.stat-text{
+
+font-size:12px;
+
+color:#cbd5e1;
+
+line-height:1.6;
+
+}
+
+.features{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.feature{
+    background:rgba(15,23,42,.45);
+    padding:15px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.08);
+    transition:.35s;
+}
+
+.feature:hover{
+
+transform:translateY(-5px);
+
+background:rgba(15,23,42,.65);
+
+}
+
+.feature i{
+
+font-size:28px;
+
+color:#38bdf8;
+
+margin-bottom:12px;
+
+display:block;
+
+}
+
+.feature h3{
+
+color:white;
+
+font-size:15px;
+
+margin-bottom:6px;
+
+}
+
+.feature p{
+
+font-size:12px;
+
+line-height:1.6;
+
+color:#cbd5e1;
+
+}
+
+.upload-header{
+
+text-align:center;
+
+margin-bottom:20px;
+
+}
+
+.upload-header h2{
+
+font-size:26px;
+
+font-weight:800;
+
+color:white;
+
+margin-bottom:8px;
+
+}
+
+.upload-header p{
+
+font-size:13px;
+
+color:#cbd5e1;
+
+}
+
+.digit-row{
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+margin-bottom:25px;
+
+}
+
+.digit{
+
+width:50px;
+
+height:50px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:rgba(255,255,255,.12);
+
+border-radius:15px;
+
+color:white;
+
+font-size:22px;
+
+font-weight:700;
+
+animation:floatDigit 2.5s ease-in-out infinite;
+
+}
+
+.digit:nth-child(2){
+
+animation-delay:.2s;
+
+}
+
+.digit:nth-child(3){
+
+animation-delay:.4s;
+
+}
+
+.digit:nth-child(4){
+
+animation-delay:.6s;
+
+}
+
+.digit:nth-child(5){
+
+animation-delay:.8s;
+
+}
+
+@keyframes floatDigit{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+}
+
+.upload-box{
+
+position:relative;
+
+height:180px;
+
+border:2px dashed #38bdf8;
+
+border-radius:25px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+cursor:pointer;
+
+transition:.35s;
+
+background:rgba(15,23,42,.45);
+
+overflow:hidden;
+
+}
+
+.upload-box:hover{
+
+background:rgba(15,23,42,.65);
+
+transform:scale(1.02);
+
+border-color:#7dd3fc;
+
+}
+
+.upload-box.dragover{
+
+background:rgba(56,189,248,.15);
+
+border-color:white;
+
+}
+.upload-box::before{
+
+content:"";
+
+position:absolute;
+
+width:180px;
+
+height:180px;
+
+border-radius:50%;
+
+background:rgba(56,189,248,.15);
+
+top:-70px;
+
+right:-70px;
+
+}
+
+.upload-content{
+
+position:relative;
+
+z-index:2;
+
+text-align:center;
+
+padding:20px;
+
+}
+
+.upload-icon{
+
+width:80px;
+
+height:80px;
+
+margin:auto;
+
+margin-bottom:15px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:22px;
+
+background:linear-gradient(135deg,#2563eb,#38bdf8);
+
+color:white;
+
+font-size:38px;
+
+box-shadow:0 15px 35px rgba(37,99,235,.45);
+
+animation:pulse 2s infinite;
+
+}
+
+@keyframes pulse{
+
+0%,100%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+}
+
+.upload-text{
+
+font-size:18px;
+
+font-weight:700;
+
+color:white;
+
+margin-bottom:8px;
+
+}
+
+.upload-help{
+
+font-size:13px;
+
+color:#cbd5e1;
+
+line-height:1.6;
+
+}
+
+input[type=file]{
+
+display:none;
+
+}
+
+.preview{
+
+display:none;
+
+align-items:center;
+
+gap:15px;
+
+padding:15px;
+
+margin-top:18px;
+
+background:rgba(15,23,42,.45);
+
+border-radius:18px;
+
+border:1px solid rgba(255,255,255,.08);
+
+animation:fadeUp .4s;
+
+}
+
+.preview img{
+
+width:70px;
+
+height:70px;
+
+object-fit:cover;
+
+border-radius:15px;
+
+background:white;
+
+padding:4px;
+
+}
+
+.preview-info{
+
+overflow:hidden;
+
+}
+
+.preview-info h4{
+
+color:white;
+
+margin-bottom:5px;
+
+font-size:15px;
+
+}
+
+.preview-info p{
+
+font-size:13px;
+
+color:#cbd5e1;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+max-width:250px;
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.predict-btn{
+
+width:100%;
+
+height:58px;
+
+margin-top:22px;
+
+border:none;
+
+border-radius:18px;
+
+font-size:17px;
+
+font-weight:700;
+
+color:white;
+
+cursor:pointer;
+
+background:linear-gradient(
+135deg,
+#2563eb,
+#7c3aed,
+#06b6d4);
+
+background-size:300% 300%;
+
+animation:buttonGradient 5s ease infinite;
+
+transition:.35s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.predict-btn::before{
+
+content:"";
+
+position:absolute;
+
+top:-40px;
+
+left:-120px;
+
+width:50px;
+
+height:220%;
+
+background:rgba(255,255,255,.35);
+
+transform:rotate(25deg);
+
+transition:.7s;
+
+}
+
+.predict-btn:hover::before{
+
+left:130%;
+
+}
+
+.predict-btn:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 18px 40px rgba(37,99,235,.45);
+
+}
+
+.predict-btn:disabled{
+
+cursor:not-allowed;
+
+opacity:.75;
+
+}
+
+@keyframes buttonGradient{
+
+0%{
+
+background-position:0% 50%;
+
+}
+
+50%{
+
+background-position:100% 50%;
+
+}
+
+100%{
+
+background-position:0% 50%;
+
+}
+
+}
+
+.loader{
+
+display:none;
+
+margin-top:20px;
+
+text-align:center;
+
+animation:fadeUp .4s;
+
+}
+
+.spinner{
+
+width:45px;
+
+height:45px;
+
+margin:auto;
+
+border:4px solid rgba(255,255,255,.15);
+
+border-top:4px solid #38bdf8;
+
+border-radius:50%;
+
+animation:spin .8s linear infinite;
+
+}
+
+@keyframes spin{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+.loading-text{
+
+margin-top:12px;
+
+color:#dbeafe;
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+.progress{
+
+width:230px;
+
+height:7px;
+
+background:rgba(255,255,255,.15);
+
+margin:15px auto 0;
+
+border-radius:20px;
+
+overflow:hidden;
+
+}
+
+.bar{
+
+width:35%;
+
+height:100%;
+
+background:#38bdf8;
+
+animation:loading 1s linear infinite;
+
+}
+
+@keyframes loading{
+
+0%{
+
+transform:translateX(-120%);
+
+}
+
+100%{
+
+transform:translateX(380%);
+
+}
+
+}
+
+.result-card{
+
+margin-top:22px;
+
+padding:25px;
+
+border-radius:24px;
+
+background:linear-gradient(
+135deg,
+rgba(34,197,94,.25),
+rgba(6,182,212,.18));
+
+border:1px solid rgba(34,197,94,.35);
+
+text-align:center;
+
+animation:fadeUp .5s;
+
+}
+
+.result-title{
+
+font-size:15px;
+
+font-weight:700;
+
+color:#bbf7d0;
+
+margin-bottom:10px;
+
+}
+
+.result-digit{
+
+font-size:78px;
+
+font-weight:900;
+
+color:white;
+
+line-height:1;
+
+text-shadow:0 10px 25px rgba(34,197,94,.45);
+
+animation:bounce .6s;
+
+}
+
+@keyframes bounce{
+
+0%{
+
+transform:scale(.5);
+
+}
+
+70%{
+
+transform:scale(1.15);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+.confidence{
+
+margin:20px auto;
+
+width:110px;
+
+height:110px;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:22px;
+
+font-weight:700;
+
+color:white;
+
+background:conic-gradient(#22c55e 0deg,var(--deg),rgba(255,255,255,.15) var(--deg));
+
+}
+
+.result-note{
+
+margin-top:10px;
+
+color:#dbeafe;
+
+font-size:13px;
+
+line-height:1.6;
+
+}
+
+.error{
+
+margin-top:20px;
+
+padding:16px;
+
+border-radius:18px;
+
+background:rgba(239,68,68,.18);
+
+border:1px solid rgba(248,113,113,.4);
+
+color:#fecaca;
+
+text-align:center;
+
+font-size:14px;
+
+animation:fadeUp .4s;
+
+}
+
+.footer{
+
+margin-top:20px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#94a3b8;
+
+}
+
+.footer i{
+
+color:#ef4444;
+
+margin:0 5px;
+
+}
+
+@media(max-width:1050px){
+
+.main-card{
+
+grid-template-columns:1fr;
+
+}
+
+.left-panel{
+
+padding:35px;
+
+}
+
+.title{
+
+font-size:42px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+body{
+
+padding:15px;
+
+}
+
+.left-panel,
+.right-panel{
+
+padding:22px;
+
+border-radius:22px;
+
+}
+
+.stats{
+
+grid-template-columns:1fr;
+
+}
+
+.features{
+
+grid-template-columns:1fr;
+
+}
+
+.title{
+
+font-size:34px;
+
+}
+
+.upload-box{
+
+height:180px;
+
+}
+
+.upload-icon{
+
+width:65px;
+
+height:65px;
+
+font-size:30px;
+
+}
+
+.result-digit{
+
+font-size:60px;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.title{
+
+font-size:30px;
+
+}
+
+.subtitle{
+
+font-size:14px;
+
+}
+
+.predict-btn{
+
+font-size:15px;
+
+}
+
+.confidence{
+
+width:90px;
+
+height:90px;
+
+font-size:18px;
+
+}
+
+}
+
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+
+    <div class="main-card">
+
+        <!-- ================= LEFT PANEL ================= -->
+
+        <section class="left-panel">
+
+    <div class="badge">
+        <i class="bi bi-cpu-fill"></i>
+        AI Powered Recognition
+    </div>
+
+    <h1 class="title">
+        Handwritten
+        <span>Digit Recognition</span>
+    </h1>
+
+    <p class="subtitle">
+        Upload a handwritten digit image and let the trained TensorFlow
+        neural network classify the number instantly.
+    </p>
+
+    <div class="features">
+
+        <div class="feature">
+
+            <i class="bi bi-cpu"></i>
+
+            <h3>
+                TensorFlow Model
+            </h3>
+
+            <p>
+                Neural network trained on MNIST handwritten digits.
+            </p>
+
+        </div>
+
+        <div class="feature">
+
+            <i class="bi bi-lightning-charge-fill"></i>
+
+            <h3>
+                Instant Prediction
+            </h3>
+
+            <p>
+                Fast image preprocessing and prediction.
+            </p>
+
+        </div>
+
+        <div class="feature">
+
+            <i class="bi bi-images"></i>
+
+            <h3>
+                Drag & Drop
+            </h3>
+
+            <p>
+                Upload PNG, JPG and JPEG digit images.
+            </p>
+
+        </div>
+
+        <div class="feature">
+
+            <i class="bi bi-bar-chart-line-fill"></i>
+
+            <h3>
+                Confidence Score
+            </h3>
+
+            <p>
+                Displays model confidence for every prediction.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+        <!-- ================= RIGHT PANEL ================= -->
+
+        <section class="right-panel">
+
+            <div class="digit-row">
+
+                <div class="digit">0</div>
+                <div class="digit">1</div>
+                <div class="digit">2</div>
+                <div class="digit">5</div>
+                <div class="digit">9</div>
+
+            </div>
+
+            <div class="upload-header">
+
+                <h2>
+                    Upload Image
+                </h2>
+
+                <p>
+                    Choose or drag a handwritten digit image
+                </p>
+
+            </div>
+
+            <form
+                action="{{ url_for('predict') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                id="uploadForm"
+                onsubmit="showLoader()"
+            >
+
+                <label
+                    class="upload-box"
+                    id="uploadBox"
+                    for="Image"
+                >
+
+                    <div class="upload-content">
+
+                        <div class="upload-icon">
+
+                            <i class="bi bi-cloud-arrow-up-fill"></i>
+
+                        </div>
+
+                        <div
+                            class="upload-text"
+                            id="uploadText"
+                        >
+
+                            Drag & Drop Image
+
+                        </div>
+
+                        <div class="upload-help">
+
+                            or <strong>Browse Files</strong>
+
+                            <br>
+
+                            PNG • JPG • JPEG
+
+                        </div>
+
+                    </div>
+
+                </label>
+
+                <input
+                    type="file"
+                    id="Image"
+                    name="Image"
+                    accept="image/png,image/jpeg,image/jpg"
+                    required
+                >
+
+                <!-- Preview -->
+
+                <div
+                    class="preview"
+                    id="preview"
+                >
+
+                    <img
+                        id="previewImage"
+                        alt="Preview"
+                    >
+
+                    <div class="preview-info">
+
+                        <h4>
+
+                            Selected Image
+
+                        </h4>
+
+                        <p id="fileName">
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="predict-btn"
+                    id="predictBtn"
+                >
+
+                    <i class="bi bi-stars"></i>
+
+                    Predict Digit
+
+                </button>
+
+                <!-- Loader -->
+
+                <div
+                    class="loader"
+                    id="loader"
+                >
+
+                    <div class="spinner"></div>
+
+                    <div class="loading-text">
+
+                        AI is analyzing your image...
+
+                    </div>
+
+                    <div class="progress">
+
+                        <div class="bar"></div>
+
+                    </div>
+
+                </div>
+                            </form>
+
+            <!-- ================= Prediction Result ================= -->
+
+            {% if result is not none %}
+
+            <div class="result-card">
+
+                <div class="result-title">
+
+                    Prediction Result
+
+                </div>
+
+                <div class="result-digit">
+
+                    {{ result }}
+
+                </div>
+
+                {% if confidence %}
+
+                <div
+                    class="confidence"
+                    style="--deg: calc({{ confidence }} * 3.6deg);"
+                >
+
+                    {{ confidence }}%
+
+                </div>
+
+                {% endif %}
+
+                <div class="result-note">
+
+                    The uploaded handwritten image is predicted as
+
+                    <strong>{{ result }}</strong>
+
+                    {% if confidence %}
+                    with a confidence of
+                    <strong>{{ confidence }}%</strong>.
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            <!-- ================= Error ================= -->
+
+            {% if error %}
+
+            <div class="error">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+            <!-- ================= Footer ================= -->
+
+            <div class="footer">
+
+                Made with
+
+                <i class="bi bi-heart-fill"></i>
+
+                using
+
+                <strong>Flask</strong>
+
+                •
+
+                <strong>TensorFlow</strong>
+
+                •
+
+                <strong>HTML</strong>
+
+                •
+
+                <strong>CSS</strong>
+
+                •
+
+                <strong>JavaScript</strong>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script>
+    const imageInput = document.getElementById("Image");
+const uploadBox = document.getElementById("uploadBox");
+const uploadText = document.getElementById("uploadText");
+
+const preview = document.getElementById("preview");
+const previewImage = document.getElementById("previewImage");
+const fileName = document.getElementById("fileName");
+
+const loader = document.getElementById("loader");
+const predictBtn = document.getElementById("predictBtn");
+
+
+// ============================
+// Show Preview
+// ============================
+
+function previewFile(file){
+
+    if(!file) return;
+
+    if(!file.type.startsWith("image/")){
+
+        alert("Please select an image file.");
+
+        return;
+    }
+
+    uploadText.innerHTML = "Image Selected ✓";
+
+    fileName.textContent = file.name;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        previewImage.src = e.target.result;
+
+        preview.style.display = "flex";
+
+    }
+
+    reader.readAsDataURL(file);
+
+}
+
+
+// ============================
+// File Input
+// ============================
+
+imageInput.addEventListener("change",function(){
+
+    if(this.files.length){
+
+        previewFile(this.files[0]);
+
+    }
+
+});
+
+
+// ============================
+// Drag & Drop
+// ============================
+
+uploadBox.addEventListener("dragover",function(e){
+
+    e.preventDefault();
+
+    uploadBox.classList.add("dragover");
+
+});
+
+uploadBox.addEventListener("dragleave",function(){
+
+    uploadBox.classList.remove("dragover");
+
+});
+
+uploadBox.addEventListener("drop",function(e){
+
+    e.preventDefault();
+
+    uploadBox.classList.remove("dragover");
+
+    if(e.dataTransfer.files.length){
+
+        imageInput.files = e.dataTransfer.files;
+
+        previewFile(e.dataTransfer.files[0]);
+
+    }
+
+});
+
+
+// ============================
+// Loader
+// ============================
+
+function showLoader(){
+
+    if(imageInput.files.length===0){
+
+        alert("Please upload an image first.");
+
+        return false;
+
+    }
+
+    loader.style.display="block";
+
+    predictBtn.disabled=true;
+
+    predictBtn.innerHTML='<i class="bi bi-hourglass-split"></i> Predicting...';
+
+    return true;
+
+}
+
+
+// ============================
+// Floating Digits Animation
+// ============================
+
+const digits=document.querySelectorAll(".digit");
+
+digits.forEach((digit)=>{
+
+    setInterval(()=>{
+
+        const random=Math.random()*8;
+
+        digit.style.transform=`translateY(-${random}px)`;
+
+    },1200+Math.random()*500);
+
+});
+
+
+// ============================
+// Upload Hover Glow
+// ============================
+
+uploadBox.addEventListener("mouseenter",()=>{
+
+    uploadBox.style.boxShadow="0 0 35px rgba(56,189,248,.35)";
+
+});
+
+uploadBox.addEventListener("mouseleave",()=>{
+
+    uploadBox.style.boxShadow="none";
+
+});
+
+
+// ============================
+// Smooth Page Load
+// ============================
+
+window.addEventListener("load",()=>{
+
+    document.body.style.opacity="0";
+
+    document.body.style.transition="opacity .8s";
+
+    requestAnimationFrame(()=>{
+
+        document.body.style.opacity="1";
+
+    });
+
+});
+
+
+// ============================
+// Keyboard Accessibility
+// ============================
+
+uploadBox.setAttribute("tabindex","0");
+
+uploadBox.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter" || e.key===" "){
+
+        e.preventDefault();
+
+        imageInput.click();
+
+    }
+
+});
+
+
+// ============================
+// Prevent Multiple Submit
+// ============================
+
+document.getElementById("uploadForm").addEventListener("submit",()=>{
+
+    predictBtn.disabled=true;
+
+});
+
+</script>
+
+</body>
+
+</html>
