@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 app.secret_key = "minst_digit_secret_key"
 
-model = pickle.load(open("mnist.pkl", "rb"))
+model = pickle.load(open("mnist.keras", "rb"))
 
 @app.route("/")
 def index():
