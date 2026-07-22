@@ -1,11 +1,10 @@
 services:
   - type: web
-    name: customer-churn-prediction
+    name: mnist-digit-recognition
     env: python
     plan: free
 
     buildCommand: |
-      python --version
       pip install --upgrade pip
       pip install -r requirements.txt
 
