@@ -1,5 +1,7 @@
+import pandas as pd
 import numpy as np
 import pickle
+import matplotlib as plt
 from PIL import Image
 from flask import Flask, render_template, request, redirect, url_for, session
 
@@ -7,7 +9,7 @@ app = Flask(__name__)
 
 app.secret_key = "minst_digit_secret_key"
 
-model = pickle.load(open("mnist.keras", "rb"))
+model = pickle.load(open("mnist.pkl", "rb"))
 
 @app.route("/")
 def index():
